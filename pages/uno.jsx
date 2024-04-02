@@ -1,6 +1,6 @@
 export async function loader() {
     const data = await fetch('https://remix-api.deno.dev/uno').then(res => res.json()).then(data => data)
-    await new Promise(r => setTimeout(() => r(), 1000))
+    await new Promise(r => setTimeout(() => r(), 5000))
     return data
 }
 
