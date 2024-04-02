@@ -37,9 +37,8 @@ export default function App() {
   const navigate = useNavigate();
 
   function handleClick(index) {
-    const newRes = fetchData(pages[index].loader)
     startTransition(() => {
-      setResource(newRes);
+      setResource(fetchData(pages[index].loader));
       navigate(pages[index].path)
     });
   }
