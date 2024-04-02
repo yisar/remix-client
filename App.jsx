@@ -3,21 +3,27 @@ import { useState, useTransition, Suspense } from "react";
 import GlobalLoader from "./GlobalLoader.jsx";
 import Loader from "./Loader.jsx";
 import { lazy } from "react";
-
 import { loader as UnoR } from './pages/uno.jsx'
 import { loader as DocR } from './pages/doc.jsx'
 import { loader as TiesR } from './pages/ties.jsx'
+import { Route, Routes, useNavigate } from 'react-router-dom';
+
+
+
 
 const pages = [
   {
+    path: '/',
     comp: lazy(() => import("./pages/uno.jsx")),
     loader: UnoR
   },
   {
+    path: '/doc',
     comp: lazy(() => import("./pages/doc.jsx")),
     loader: DocR
   },
   {
+    path: 'ties',
     comp: lazy(() => import("./pages/ties.jsx")),
     loader: TiesR
   }
@@ -30,18 +36,16 @@ export default function App() {
   const [tab, setTab] = useState(0);
   const [resource, setResource] = useState(initialResource);
   const [isPending, startTransition] = useTransition();
+  const navigate = useNavigate();
 
   function handleClick(index) {
     const newRes = fetchData(pages[index].loader)
     startTransition(() => {
       setTab(index);
       setResource(newRes);
+      navigate(pages[index].path)
     });
   }
-
-  const Comp = pages[tab].comp
-
-  console.log(Comp)
 
   return (
     <>
@@ -68,9 +72,9 @@ export default function App() {
       </ul>
       <div className={`tab ${isPending ? "pending" : null}`}>
         <Suspense fallback={<Loader />}>
-          {tab === 0 && <Comp resource={resource} />}
-          {tab === 1 && <Comp resource={resource} />}
-          {tab === 2 && <Comp resource={resource} />}
+          <Routes>
+            {pages.map(item => <Route path={item.path} element={<item.comp resource={resource} />} key={item.path}></Route>)}
+          </Routes>
         </Suspense>
       </div>
     </>
