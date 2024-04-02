@@ -2,10 +2,29 @@ import "./app.css";
 import { useState, useTransition, Suspense } from "react";
 import GlobalLoader from "./GlobalLoader.jsx";
 import Loader from "./Loader.jsx";
-import Content from "./Content.jsx";
-import { fetchData } from "./fakeApi";
+import { lazy } from "react";
 
-const initialResource = fetchData();
+import { loader as UnoR } from './pages/uno.jsx'
+import { loader as DocR } from './pages/doc.jsx'
+import { loader as TiesR } from './pages/ties.jsx'
+
+const pages = [
+  {
+    comp: lazy(() => import("./pages/uno.jsx")),
+    loader: UnoR
+  },
+  {
+    comp: lazy(() => import("./pages/doc.jsx")),
+    loader: DocR
+  },
+  {
+    comp: lazy(() => import("./pages/ties.jsx")),
+    loader: TiesR
+  }
+]
+
+import { fetchData } from "./fetchData.js";
+const initialResource = fetchData(UnoR);
 
 export default function App() {
   const [tab, setTab] = useState(0);
@@ -13,11 +32,16 @@ export default function App() {
   const [isPending, startTransition] = useTransition();
 
   function handleClick(index) {
+    const newRes = fetchData(pages[index].loader)
     startTransition(() => {
       setTab(index);
-      setResource(fetchData());
+      setResource(newRes);
     });
   }
+
+  const Comp = pages[tab].comp
+
+  console.log(Comp)
 
   return (
     <>
@@ -44,9 +68,9 @@ export default function App() {
       </ul>
       <div className={`tab ${isPending ? "pending" : null}`}>
         <Suspense fallback={<Loader />}>
-          {tab === 0 && <Content page="Uno" resource={resource} />}
-          {tab === 1 && <Content page="Dos" resource={resource} />}
-          {tab === 2 && <Content page="Tres" resource={resource} />}
+          {tab === 0 && <Comp resource={resource} />}
+          {tab === 1 && <Comp resource={resource} />}
+          {tab === 2 && <Comp resource={resource} />}
         </Suspense>
       </div>
     </>
