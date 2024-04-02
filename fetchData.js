@@ -1,13 +1,5 @@
 export function fetchData(loader) {
-    return  wrapPromise(loader());
-}
-
-
-// Suspense integrations like Relay implement
-// a contract like this to integrate with React.
-// Real implementations can be significantly more complex.
-// Don't copy-paste this into your project!
-function wrapPromise(promise) {
+    const promise = loader()
     let status = "pending";
     let result;
     let suspender = promise.then(

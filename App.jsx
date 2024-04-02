@@ -1,15 +1,11 @@
 import "./app.css";
 import { useState, useTransition, Suspense } from "react";
 import GlobalLoader from "./GlobalLoader.jsx";
-import Loader from "./Loader.jsx";
 import { lazy } from "react";
 import { loader as UnoR } from './pages/uno.jsx'
 import { loader as DocR } from './pages/doc.jsx'
 import { loader as TiesR } from './pages/ties.jsx'
 import { Route, Routes, useNavigate } from 'react-router-dom';
-
-
-
 
 const pages = [
   {
@@ -71,7 +67,7 @@ export default function App() {
         </li>
       </ul>
       <div className={`tab ${isPending ? "pending" : null}`}>
-        <Suspense fallback={<Loader />}>
+        <Suspense fallback={<div>loading...</div>}>
           <Routes>
             {pages.map(item => <Route path={item.path} element={<item.comp resource={resource} />} key={item.path}></Route>)}
           </Routes>
